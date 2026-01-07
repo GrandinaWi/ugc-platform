@@ -1,18 +1,18 @@
 package model
 
-import "time"
+import (
+	"errors"
+	"time"
+)
 
-type UserAuth struct {
-	ID        int64     `json:"id"`
-	Email     string    `json:"username"`
-	Password  string    `json:"password"`
-	CreatedAt time.Time `json:"created_at"`
+type User struct {
+	ID        int64
+	Email     string
+	Password  string
+	Username  string
+	Bio       string
+	Avatar    string
+	CreatedAt time.Time
 }
 
-type UserInfo struct {
-	ID        int64     `json:"id"`
-	Username  string    `json:"username"`
-	Bio       string    `json:"bio"`
-	Avatar    string    `json:"avatar"`
-	CreatedAt time.Time `json:"created_at"`
-}
+var ErrUserAlreadyExists = errors.New("user already exists")
