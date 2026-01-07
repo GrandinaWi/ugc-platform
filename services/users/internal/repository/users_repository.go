@@ -6,7 +6,7 @@ import (
 )
 
 type Repository interface {
-	RepoLogin(ctx context.Context, id int64) (*model.User, error)
+	RepoLogin(ctx context.Context, email string, password string) (*model.User, error)
 	RepoCreate(ctx context.Context, email string, password string, username string, bio string, avatar string) (*model.User, error)
 	RepoUserInfo(ctx context.Context, id int64) (*model.User, error)
 }
