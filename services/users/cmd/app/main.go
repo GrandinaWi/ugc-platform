@@ -13,9 +13,9 @@ func main() {
 	if err := godotenv.Load(); err != nil {
 		log.Println("No .env file found")
 	}
-	dsn := os.Getenv("USERS_DB_DSN")
+	dsn := os.Getenv("DATABASE_URL")
 	if dsn == "" {
-		log.Fatal("USERS_DB_DSN is not set")
+		log.Fatal("DATABASE_URL is not set")
 	}
 	application, err := app.New(dsn)
 	if err != nil {

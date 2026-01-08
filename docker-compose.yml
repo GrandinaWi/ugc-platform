@@ -1,0 +1,60 @@
+services:
+  api-gateway:
+      build: ./api-gateway
+      ports:
+          - "8080:8080"
+      environment:
+        JWT_SECRET: ugc-sercret
+        USER_API_URL: http://user-api:8080
+      depends_on:
+        - users-api
+      networks:
+        - backend
+
+  users-api:
+    build: ./services/users
+    ports:
+      - "8081:8080"
+    environment:
+      DATABASE_URL: postgres://postgres:postgres@users-db:5432/users?sslmode=disable
+    depends_on:
+      - users-db
+    networks:
+      - backend
+
+  users-db:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: users
+    volumes:
+      - users_pgdata:/var/lib/postgresql/data
+    networks:
+      - backend
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres -d users" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  users-migrate:
+      image: migrate/migrate
+      depends_on:
+        users-db:
+          condition: service_healthy
+      volumes:
+        - ./services/users/migrations:/migrations
+      command: [
+        "-path", "/migrations",
+        "-database", "postgres://postgres:postgres@users-db:5432/users?sslmode=disable",
+        "up"
+      ]
+      networks:
+        - backend
+volumes:
+  users_pgdata:
+
+networks:
+  backend:
+    driver: bridge
