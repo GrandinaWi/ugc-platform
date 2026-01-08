@@ -39,7 +39,7 @@ func (p *Postgres) RepoCreate(ctx context.Context, email string, password string
 		return nil, err
 	}
 
-	_, err = tx.ExecContext(ctx, "INSERT INTO users (id,username,bio,avatar_url) VALUES ($1,$2,$3,$4) RETURNING username,bio,avatar_url", u.ID, username, bio, avatar)
+	_, err = tx.ExecContext(ctx, "INSERT INTO users (id,username,bio,avatar_url) VALUES ($1,$2,$3,$4)", u.ID, username, bio, avatar)
 	if err != nil {
 		return nil, err
 	}
@@ -52,7 +52,7 @@ func (p *Postgres) RepoCreate(ctx context.Context, email string, password string
 func (p *Postgres) RepoLogin(ctx context.Context, email string, password string) (*model.User, error) {
 	var u model.User
 	var hash string
-	err := p.db.QueryRowContext(ctx, "SELECT id,email FROM users_auth WHERE email=$1", email).Scan(&u.ID, &u.Email)
+	err := p.db.QueryRowContext(ctx, "SELECT id,email,password FROM users_auth WHERE email=$1", email).Scan(&u.ID, &u.Email, &hash)
 	if err == sql.ErrNoRows {
 		return nil, nil
 	}

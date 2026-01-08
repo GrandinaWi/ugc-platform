@@ -6,6 +6,7 @@ import (
 	"users/internal/app"
 
 	"github.com/joho/godotenv"
+	_ "github.com/lib/pq"
 )
 
 func main() {
