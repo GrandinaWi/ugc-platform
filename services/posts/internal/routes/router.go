@@ -9,10 +9,10 @@ import (
 func NewRouter(postsService service.Service) http.Handler {
 	mux := http.NewServeMux()
 	handler := handler2.NewPostsHandler(postsService)
-	mux.HandleFunc("POST /create", handler.CreatePost)
-	mux.HandleFunc("POST /delete", handler.DeletePost)
-	mux.HandleFunc("GET /posts/", handler.GetPost)
+	mux.HandleFunc("POST /posts", handler.CreatePost)
 	mux.HandleFunc("GET /posts", handler.GetPosts)
+	mux.HandleFunc("GET /posts/{post_id}", handler.GetPost)
+	mux.HandleFunc("DELETE /posts/{post_id}", handler.DeletePost)
 	mux.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 		w.Write([]byte("OK"))
