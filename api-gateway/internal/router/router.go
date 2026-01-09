@@ -11,7 +11,13 @@ func New(secret []byte, usersURL string) http.Handler {
 
 	mux.Handle("/register", proxy.New(usersURL))
 	mux.Handle("/login", proxy.New(usersURL))
-	mux.Handle("/user", auth.Middleware(secret, proxy.New(usersURL)))
+	mux.Handle("/user", auth.Middleware(secret, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodGet {
+			http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
+			return
+		}
+		proxy.New(usersURL).ServeHTTP(w, r)
+	})))
 
 	return mux
 

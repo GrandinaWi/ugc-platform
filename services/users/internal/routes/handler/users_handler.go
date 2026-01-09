@@ -4,7 +4,11 @@ import (
 	"encoding/json"
 	"net/http"
 	"strconv"
+	"time"
+	"users/internal/model"
 	service2 "users/internal/service"
+
+	"github.com/golang-jwt/jwt/v5"
 )
 
 type UsersHandler struct {
@@ -52,11 +56,26 @@ func (s *UsersHandler) UserLoginHandler(w http.ResponseWriter, r *http.Request) 
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	_ = json.NewEncoder(w).Encode(user)
+	claims := jwt.MapClaims{
+		"user_id": user.ID,
+		"exp":     time.Now().Add(time.Hour).Unix(),
+	}
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	tokenString, err := token.SignedString(model.JwtSecret)
+	if err != nil {
+		http.Error(w, "token invalid", http.StatusBadRequest)
+		return
+	}
+	json.NewEncoder(w).Encode(map[string]string{
+		"token": tokenString,
+	})
+
 }
 func (s *UsersHandler) UserInfoHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
 	ctx := r.Context()
 	userIDStr := r.Header.Get("X-User-ID")
 	if userIDStr == "" {

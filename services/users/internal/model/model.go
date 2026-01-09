@@ -2,6 +2,7 @@ package model
 
 import (
 	"errors"
+	"os"
 	"time"
 )
 
@@ -16,3 +17,4 @@ type User struct {
 }
 
 var ErrUserAlreadyExists = errors.New("user already exists")
+var JwtSecret = []byte(os.Getenv("JWT_SECRET"))
