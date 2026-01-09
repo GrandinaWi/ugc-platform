@@ -3,10 +3,10 @@ package routes
 import (
 	"net/http"
 	handler2 "users/internal/routes/handler"
-	service2 "users/internal/service"
+	service "users/internal/service"
 )
 
-func NewRouter(userService service2.Service) http.Handler {
+func NewRouter(userService service.Service) http.Handler {
 	mux := http.NewServeMux()
 	handler := handler2.NewUsersHandler(userService)
 	mux.HandleFunc("POST /register", handler.UserRegisterHandler)

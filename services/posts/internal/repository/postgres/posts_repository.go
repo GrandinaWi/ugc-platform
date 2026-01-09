@@ -10,7 +10,7 @@ type Postgres struct {
 	db *sql.DB
 }
 
-func NewPostgres(db *sql.DB) *Postgres {
+func NewRepository(db *sql.DB) *Postgres {
 	return &Postgres{db: db}
 }
 
