@@ -13,7 +13,7 @@ type PostsHandler struct {
 	service service.Service
 }
 
-func NewUsersHandler(service service.Service) *PostsHandler {
+func NewPostsHandler(service service.Service) *PostsHandler {
 	return &PostsHandler{service: service}
 }
 
