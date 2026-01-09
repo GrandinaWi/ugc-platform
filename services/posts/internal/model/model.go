@@ -1,6 +1,9 @@
 package model
 
-import "time"
+import (
+	"errors"
+	"time"
+)
 
 type Post struct {
 	ID           string    `json:"id"`
@@ -11,3 +14,5 @@ type Post struct {
 	CommentCount int       `json:"comment_count"`
 	CreatedAt    time.Time `json:"created_at"`
 }
+
+var PostNotExist = errors.New("post does not exist")
