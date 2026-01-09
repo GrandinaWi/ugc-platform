@@ -1,4 +1,3 @@
--- users_auth: данные для логина
 CREATE TABLE IF NOT EXISTS posts (
                                      id BIGSERIAL PRIMARY KEY,
                                      author_id BIGINT NOT NULL,
@@ -6,6 +5,5 @@ CREATE TABLE IF NOT EXISTS posts (
     content TEXT NOT NULL,
     like_count INTEGER DEFAULT 0,
     comment_count INTEGER DEFAULT 0,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
                              );
