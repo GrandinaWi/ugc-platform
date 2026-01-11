@@ -19,8 +19,8 @@ func New(secret []byte, usersURL string, postsURL string) http.Handler {
 		proxy.New(usersURL).ServeHTTP(w, r)
 	})))
 
-	mux.Handle("/posts", proxy.New(usersURL))
-	mux.Handle("/posts/{post_id}", proxy.New(usersURL))
+	mux.Handle("/posts", proxy.New(postsURL))
+	mux.Handle("/posts/", proxy.New(postsURL))
 
 	return mux
 
