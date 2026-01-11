@@ -12,6 +12,7 @@ func main() {
 	handler := router.New(
 		cfg.JWTSecret,
 		cfg.UsersAPI,
+		cfg.PostsAPI,
 	)
 	log.Println("Gateway listening on:", cfg.Port)
 	log.Fatal(http.ListenAndServe(":"+cfg.Port, handler))

@@ -6,6 +6,7 @@ type Config struct {
 	Port      string
 	JWTSecret []byte
 	UsersAPI  string
+	PostsAPI  string
 }
 
 func Load() *Config {
@@ -13,6 +14,7 @@ func Load() *Config {
 		Port:      getEnv("PORT", "8080"),
 		JWTSecret: []byte(getEnv("JWT_SECRET", "ugc-secret")),
 		UsersAPI:  getEnv("USERS_API", "http://users-api:8080"),
+		PostsAPI:  getEnv("POSTS_API", "http://posts-api:8080"),
 	}
 }
 func getEnv(key, def string) string {

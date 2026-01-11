@@ -6,7 +6,7 @@ import (
 	"net/http"
 )
 
-func New(secret []byte, usersURL string) http.Handler {
+func New(secret []byte, usersURL string, postsURL string) http.Handler {
 	mux := http.NewServeMux()
 
 	mux.Handle("/register", proxy.New(usersURL))
@@ -18,6 +18,9 @@ func New(secret []byte, usersURL string) http.Handler {
 		}
 		proxy.New(usersURL).ServeHTTP(w, r)
 	})))
+
+	mux.Handle("/posts", proxy.New(usersURL))
+	mux.Handle("/posts/{post_id}", proxy.New(usersURL))
 
 	return mux
 
