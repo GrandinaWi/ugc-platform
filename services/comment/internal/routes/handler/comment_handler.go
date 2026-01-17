@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"comment/internal/auth"
 	"comment/internal/model"
 	"comment/internal/service"
 	"encoding/json"
@@ -30,10 +31,9 @@ func (h *CommentHandler) CreateHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	defer r.Body.Close()
-	idStr := r.PathValue("user_id")
-	userID, err := strconv.ParseInt(idStr, 10, 64)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+	userID, ok := auth.UserIDFromContext(ctx)
+	if !ok {
+		http.Error(w, "unauthorized", http.StatusUnauthorized)
 		return
 	}
 	comment := model.Comment{
@@ -55,16 +55,14 @@ func (h *CommentHandler) CreateHandler(w http.ResponseWriter, r *http.Request) {
 }
 func (h *CommentHandler) GetAllHandler(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	var req struct {
-		PostID int64 `json:"post_id"`
-	}
-	err := json.NewDecoder(r.Body).Decode(&req)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+	postIDStr := r.PathValue("post_id")
+	postID, err := strconv.ParseInt(postIDStr, 10, 64)
+	if err != nil || postID <= 0 {
+		http.Error(w, "invalid post_id", http.StatusBadRequest)
 		return
 	}
-	defer r.Body.Close()
-	comments, err := h.service.GetByAll(ctx, req.PostID)
+
+	comments, err := h.service.GetByAll(ctx, postID)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
@@ -76,21 +74,19 @@ func (h *CommentHandler) GetAllHandler(w http.ResponseWriter, r *http.Request) {
 func (h *CommentHandler) DeleteHandler(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	idStr := r.PathValue("id")
-	userID, err := strconv.ParseInt(idStr, 10, 64)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+	id, err := strconv.ParseInt(idStr, 10, 64)
+	if err != nil || id <= 0 {
+		http.Error(w, "invalid id", http.StatusBadRequest)
 		return
 	}
-	var req struct {
-		ID int64 `json:"id"`
-	}
-	err = json.NewDecoder(r.Body).Decode(&req)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+
+	userID, ok := auth.UserIDFromContext(ctx)
+	if !ok {
+		http.Error(w, "unauthorized", http.StatusUnauthorized)
 		return
 	}
-	defer r.Body.Close()
-	err = h.service.DeleteByID(ctx, req.ID, userID)
+
+	err = h.service.DeleteByID(ctx, id, userID)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
@@ -102,16 +98,14 @@ func (h *CommentHandler) DeleteHandler(w http.ResponseWriter, r *http.Request) {
 func (h *CommentHandler) GetByIDHandler(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	var comment *model.Comment
-	var req struct {
-		ID int64 `json:"id"`
-	}
-	err := json.NewDecoder(r.Body).Decode(&req)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+	idStr := r.PathValue("id")
+	id, err := strconv.ParseInt(idStr, 10, 64)
+	if err != nil || id <= 0 {
+		http.Error(w, "invalid id", http.StatusBadRequest)
 		return
 	}
 	defer r.Body.Close()
-	comment, err = h.service.GetByID(ctx, req.ID)
+	comment, err = h.service.GetByID(ctx, id)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
