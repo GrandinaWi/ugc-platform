@@ -13,7 +13,7 @@ func NewRouter(commentsService service.Service) http.Handler {
 	mux.HandleFunc("GET /posts/{post_id}/comments", handler.GetAllHandler)
 	mux.HandleFunc("GET /comments/{id}", handler.GetByIDHandler)
 	mux.HandleFunc("DELETE /comments/{id}", handler.DeleteHandler)
-	mux.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("GET /health", func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 		w.Write([]byte("OK"))
 	})
