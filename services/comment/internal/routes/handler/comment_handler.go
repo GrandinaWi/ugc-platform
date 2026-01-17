@@ -20,12 +20,17 @@ func NewHandler(service service.Service) *CommentHandler {
 func (h *CommentHandler) CreateHandler(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	var commentID int64
+	postIDStr := r.PathValue("post_id")
+	postID, err := strconv.ParseInt(postIDStr, 10, 64)
+	if err != nil || postID <= 0 {
+		http.Error(w, "invalid post_id", http.StatusBadRequest)
+		return
+	}
 	var req struct {
-		PostID   int64  `json:"post_id"`
 		ParentID *int64 `json:"parent_id"`
 		Content  string `json:"content"`
 	}
-	err := json.NewDecoder(r.Body).Decode(&req)
+	err = json.NewDecoder(r.Body).Decode(&req)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
@@ -37,7 +42,7 @@ func (h *CommentHandler) CreateHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	comment := model.Comment{
-		PostID:   req.PostID,
+		PostID:   postID,
 		UserID:   userID,
 		ParentID: req.ParentID,
 		Content:  req.Content,
