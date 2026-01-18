@@ -9,8 +9,45 @@ services:
       depends_on:
         - users-api
         - posts-api
+        - comments-api
       networks:
         - backend
+  comments-api:
+      build: ./services/comments
+      ports:
+          - "8083:8080"
+      environment:
+          DATABASE_URL: postgres://postgres:postgres@comments-db:5432/comments?sslmode=disable
+          JWT_SECRET: ugc-seсret
+      depends_on:
+        comments-db:
+            condition: service_healthy
+      networks:
+          - backend
+  comments-db:
+      image: postgres:16
+      environment:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: comments
+      volumes:
+        - comments_pgdata:/var/lib/postgresql/data
+      networks:
+          - backend
+  comments-migrate:
+    image: migrate/migrate
+    depends_on:
+      comments-db:
+        condition: service_healthy
+    volumes:
+      - ./services/comments/migrations:/migrations
+    command: [
+      "-path", "/migrations",
+      "-database", "postgres://postgres:postgres@comments-db:5432/comments?sslmode=disable",
+      "up"
+    ]
+    networks:
+      - backend
 
   users-api:
     build: ./services/users
@@ -24,6 +61,7 @@ services:
          condition: service_healthy
     networks:
       - backend
+
 
   users-db:
     image: postgres:16
