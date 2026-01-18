@@ -13,6 +13,7 @@ func main() {
 		cfg.JWTSecret,
 		cfg.UsersAPI,
 		cfg.PostsAPI,
+		cfg.CommentsAPI,
 	)
 	log.Println("Gateway listening on:", cfg.Port)
 	log.Fatal(http.ListenAndServe(":"+cfg.Port, handler))
