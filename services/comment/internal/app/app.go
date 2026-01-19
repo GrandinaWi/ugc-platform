@@ -8,6 +8,8 @@ import (
 	"database/sql"
 	"net/http"
 	"time"
+
+	_ "github.com/lib/pq"
 )
 
 type App struct {

@@ -60,7 +60,7 @@ func (h *CommentHandler) CreateHandler(w http.ResponseWriter, r *http.Request) {
 }
 func (h *CommentHandler) GetAllHandler(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	postIDStr := r.PathValue("post_id")
+	postIDStr := r.URL.Query().Get("post_id")
 	postID, err := strconv.ParseInt(postIDStr, 10, 64)
 	if err != nil || postID <= 0 {
 		http.Error(w, "invalid post_id", http.StatusBadRequest)
