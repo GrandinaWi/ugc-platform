@@ -13,7 +13,7 @@ services:
       networks:
         - backend
   comments-api:
-      build: ./services/comments
+      build: ./services/comment
       ports:
           - "8083:8080"
       environment:
@@ -40,7 +40,7 @@ services:
       comments-db:
         condition: service_healthy
     volumes:
-      - ./services/comments/migrations:/migrations
+      - ./services/comment/migrations:/migrations
     command: [
       "-path", "/migrations",
       "-database", "postgres://postgres:postgres@comments-db:5432/comments?sslmode=disable",
