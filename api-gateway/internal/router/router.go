@@ -23,7 +23,6 @@ func New(secret []byte, usersURL string, postsURL string, commentsAPI string) ht
 	mux.Handle("/posts/", proxy.New(postsURL))
 
 	// comments
-	mux.Handle("/posts/", auth.Middleware(secret, proxy.New(commentsAPI)))
 	mux.Handle("/comments/", auth.Middleware(secret, proxy.New(commentsAPI)))
 
 	return mux

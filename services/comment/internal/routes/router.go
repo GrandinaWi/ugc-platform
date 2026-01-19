@@ -9,8 +9,8 @@ import (
 func NewRouter(commentsService service.Service) http.Handler {
 	mux := http.NewServeMux()
 	handler := handler2.NewHandler(commentsService)
-	mux.HandleFunc("POST /posts/{post_id}/comments", handler.CreateHandler)
-	mux.HandleFunc("GET /posts/{post_id}/comments", handler.GetAllHandler)
+	mux.HandleFunc("POST /comments", handler.CreateHandler)
+	mux.HandleFunc("GET /comments?post_id={post_id}", handler.GetAllHandler)
 	mux.HandleFunc("GET /comments/{id}", handler.GetByIDHandler)
 	mux.HandleFunc("DELETE /comments/{id}", handler.DeleteHandler)
 	mux.HandleFunc("GET /health", func(w http.ResponseWriter, r *http.Request) {
